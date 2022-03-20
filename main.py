@@ -2,8 +2,7 @@ import argparse
 import socket
 import sys
 import os
-
-VERSION = 1, '1.0-dev.1'
+from win32com.client import Dispatch
 
 class bcolors:
     HEADER = '\033[95m'
@@ -16,15 +15,19 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+def get_version():
+    parser = Dispatch("Scripting.FileSystemObject")
+    version = parser.GetFileVersion(sys.argv[0])
+    return version
 
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog='hntoip', usage='%(prog)s [options]', description='Show IP of website (URL)')
 
-    parser.add_argument('-V', '--version', action='version', version=f'IP From Website {VERSION[1]}')
+    parser.add_argument('-V', '--version', action='version', version=f'IP From Website {get_version()}-beta.2')
     parser.add_argument('-m', '--module', action='store_true', help='\
         use as a helper program to pipe output to another program. \
         PowerShell syntax: \
-        \'echo [your hostname (google.com)] | hntoip | [your program that waits for input]\'\
+        \'echo [yourdomain.net] | hntoip | [your program that waits for input]\'\
     ')
     parser.add_argument('-C', '--clear', action='store_true', help='\
         clear terminal before launch\
