@@ -3,7 +3,7 @@ import socket
 import sys
 import os
 
-VERSION = 1, '1.0dev0.1'
+VERSION = 1, '1.0-dev.1'
 
 class bcolors:
     HEADER = '\033[95m'
@@ -33,7 +33,12 @@ def create_parser() -> argparse.ArgumentParser:
     return parser
 
 def get_ip_by_hostname(hostname: str) -> str:
-    return socket.gethostbyname(hostname)
+    try:
+        return socket.gethostbyname(hostname)
+    except socket.gaierror as error:
+        return f'{bcolors.FAIL}[!] Invalid Hostname - {error}{bcolors.ENDC}'
+    except socket.timeout as error:
+        return f'{bcolors.FAIL}[!] Invalid Hostname - {error}{bcolors.ENDC}'
 
 def main():
     parser = create_parser()
